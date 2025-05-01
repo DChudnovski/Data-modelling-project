@@ -33,7 +33,7 @@
 -   sectionid int
 -   teacherid int
 -   name varchar(40)
--   time time
+-   period int
 -   grade int
--   capacity
--   subject
+-   capacity int
+-   subject varchar(15)

@@ -6,10 +6,10 @@ import time
 import numpy as np
 import pandas as pd
 
-student_names_file = './student_names.csv'
-teacher_names_file ='./teacher_names.csv'
-student_file = './student_data.csv'
-teacher_file = './teacher_data.csv'
+student_names_file = '../name_csvs/student_names.csv'
+teacher_names_file ='../name_csvs/teacher_names.csv'
+student_file = '../Data_CSVs/student_data.csv'
+teacher_file = '../Data_CSVs/teacher_data.csv'
 
 def get_rand_name(name_file):
     first_names = []
@@ -22,7 +22,6 @@ def get_rand_name(name_file):
         file.close()
     return (first_names[randint(0,len(first_names)-1)], last_names[randint(0,len(last_names)-1)])
 
-
 def get_rand_date(start, end, strformat='%Y-%m-%d'):
     start_time = time.mktime(datetime.strptime(start, strformat).timetuple())
     end_time = time.mktime(datetime.strptime(end, strformat).timetuple())
@@ -32,7 +31,7 @@ def get_rand_date(start, end, strformat='%Y-%m-%d'):
 
 def generate_student_admin_data(number_of_entries):
     i = 1
-    fields = ['studentid','lastname','firstname','grade','GPA','honors','DOB']
+    fields = ['studentid','lastname','firstname','grade','GPA','scheduleid','honors','DOB']
     names_list = []
     while i <= number_of_entries:
         i += 1
@@ -59,6 +58,7 @@ def generate_student_admin_data(number_of_entries):
             'firstname': name[0],
             'grade': grade,
             'GPA': GPA,
+            'scheduleid':0,
             'honors': True if GPA > 3.4 else False,
             'DOB': DOB
         }
@@ -69,14 +69,13 @@ def generate_student_admin_data(number_of_entries):
 
 def generate_teacher_admin_data(number_of_entries):
     i = 1
-    fields = ["teacherid","lastname","firstname","yearstaught"]
+    fields = ["teacherid","lastname","firstname","scheduleid","yearstaught"]
     names_list = []
     while i <= number_of_entries:
         names_list.append(get_rand_name(teacher_names_file))
         i += 1
     with open(teacher_file, 'w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=fields)
-        
         writer.writeheader()
         file.close()
     for j, name in enumerate(names_list):
@@ -85,16 +84,14 @@ def generate_teacher_admin_data(number_of_entries):
             "teacherid": j + 1 ,
             "lastname": name[1],
             "firstname": name[0],
+            "scheduleid":0,
             "yearstaught": randrange(1,30)
         }
         with open (teacher_file, 'a', newline='') as file:
             writer = csv.DictWriter(file,fields)
             writer.writerow(teacher_dict)
             file.close()
-
-def generate_sections(number_of_students, number_of_teachers):
-    pass
         
-
+generate_student_admin_data(300)
 
  

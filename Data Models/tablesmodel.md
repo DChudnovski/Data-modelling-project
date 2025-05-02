@@ -1,6 +1,6 @@
 **Students Table (MSSQL)**
 
--   studentid int
+-   studentid int (Primary Key)
 -   lastname varchar(25)
 -   firstname varchar(25)
 -   grade int

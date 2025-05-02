@@ -13,23 +13,36 @@ then
 fi
 
 targetDir=$1
-origAbsPath=$(pwd)
 
 cd "$targetDir" || exit
 
+file=./SQL.sql
+if [ ! -e  "$file" ] ;
+then
+    touch "$file"
+fi
+
 declare -a toWrite
 
-for file in *.csv ;
+for file in *.csv
 do
     [[ -e "$file" ]] || break
     toWrite+=("$file")
 done
 
-for filename in "${toWrite[@]}";
+for file in "${toWrite[@]}"
 do
-    if [ "$filename" = "student"]
-    then
-        mysql
-    fi
+    tablename="${file::-9}s"
+    columnNames="$(cut "$file" -d $'\n' -f1 | tr -d $'\n')" 
+    echo "INSERT INTO $tablename ($columnNames) VALUES" > SQL.sql
+    cut "$file" -d $'\n' -f 2- |
+    while read line
+    do
+        echo "($line)," >> SQL.sql
+    done
+    sed '$ s/.$//' SQL.sql > newSQL.sql
+    echo ';' >> newSQL.sql
+    rm -rf "SQL.sql"
+    mysql schoolschedules < newSQL.sql
+    rm -rf "newSQL.sql"
 done
-

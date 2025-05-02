@@ -54,11 +54,11 @@ def generate_sections(sections_needed_dict):
             section_dict = {
                 'sectionid':i,
                 'teacherid': t,
-                'name': f'{section_type} Period: {p} {i}',
+                'name': f"'{section_type} Period: {p} {i}'",
                 'period': p ,
                 'grade':section_type.split(' ')[1],
                 'capacity':20,
-                'subject':section_type.split(' ')[0]
+                'subject':f"'{section_type.split(' ')[0]}'"
             }
             with open(section_file, 'a',newline='') as file:
                 writer = csv.DictWriter(file,fields)

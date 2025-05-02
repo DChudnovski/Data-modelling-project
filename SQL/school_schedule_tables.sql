@@ -1,13 +1,17 @@
 USE schoolschedules;
 
+INSERT INTO students 
+VALUES (1,'Rogers','Joy',6,4.0,0,True,06-22-2012);
+
 CREATE TABLE students (
     studentid int NOT NULL,
     lastname varchar(25) NOT NULL,
     firstname varchar(25) NOT NULL,
     grade int NOT NULL,
-    DOB datetime NOT NULL,
+    GPA float,
     scheduleid int,
-    honorsstatus bool NOT NULL,
+    honors boolean NOT NULL,
+    DOB date NOT NULL,
     PRIMARY KEY (studentid)
 );
 

@@ -54,13 +54,13 @@ def generate_student_admin_data(number_of_entries):
         scheduleid = f'{format(grade,'0')}' + f'{format(j + 1,'04')}'
         student_dict = {
             'studentid': j + 1,
-            'lastname': name[1],
-            'firstname': name[0],
+            'lastname': f"'{name[1]}'",
+            'firstname': f"'{name[0]}'",
             'grade': grade,
             'GPA': GPA,
             'scheduleid':0,
             'honors': True if GPA > 3.4 else False,
-            'DOB': DOB
+            'DOB': f"'{DOB}'"
         }
         with open(student_file, 'a',newline='') as file:
             writer = csv.DictWriter(file,fields)
@@ -82,8 +82,8 @@ def generate_teacher_admin_data(number_of_entries):
         subjects = {}
         teacher_dict = {
             "teacherid": j + 1 ,
-            "lastname": name[1],
-            "firstname": name[0],
+            "lastname": f"'{name[1]}'",
+            "firstname": f"'{name[0]}'",
             "scheduleid":0,
             "yearstaught": randrange(1,30)
         }
@@ -92,6 +92,6 @@ def generate_teacher_admin_data(number_of_entries):
             writer.writerow(teacher_dict)
             file.close()
         
-generate_student_admin_data(300)
+generate_teacher_admin_data(20)
 
  

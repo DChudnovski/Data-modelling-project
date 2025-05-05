@@ -11,7 +11,6 @@ teachers = pd.read_csv(teacher_csv)
 subjects = ['English', 'Mathematics', 'History', 'Science', 'Lunch']
 grades = ['6','7','8']
 
-teacher_capacity = {}
 
 grade_counts = {
     '6':0,
@@ -20,20 +19,33 @@ grade_counts = {
 }
 for index, row in students.iterrows():
     grade_counts[str(row['grade'])] += 1
+
 sections_needed ={
     '6':0,
     '7':0,
     '8':0
 }
 for grade_amount in grade_counts.items():
-    sections_needed[grade_amount[0]] += math.ceil(grade_amount[1]/20) * 6
+    class_cap = 20
+    ratio = grade_amount[1]/class_cap
+    if math.remainder(grade_amount[1], class_cap) > 0 and math.remainder(grade_amount[1], class_cap) / class_cap  < 0.6:
+        sections_needed[grade_amount[0]] = (math.floor(ratio), class_cap + (grade_amount[1] % class_cap))
+    else:
+        sections_needed[grade_amount[0]] = (math.ceil(ratio), grade_amount[1] % class_cap)
 
-total_sections = sum(sections_needed.values())
+total_sections = 0
+for tuple in sections_needed.values():
+    total_sections += tuple[0]
+    
 
-sections_needed_grade_subject= {}
-for subject in subjects:
+sections_needed_grade_period= {}
+for i in range(1,6):
     for grade in grades:
-        sections_needed_grade_subject[f'{subject} {grade}'] = math.ceil(grade_counts[grade] / 20)
+        sections_needed_grade_period[f'{i} {grade}'] = sections_needed[f'{grade}']
+# print(sections_needed_grade_period)
+# quit()
+
+teacher_capacity = {}
 for index, row in teachers.iterrows():
     teacher_capacity[f'{row['teacherid']}'] = round(total_sections/teachers.max()['teacherid'])
 
@@ -44,29 +56,33 @@ def generate_sections(sections_needed_dict):
     with open(section_file, 'w', newline='') as file:
         csv.DictWriter(file,fields).writeheader()
         file.close()
-    for section_type, number in sections_needed_dict.items():
-        p = 1
-        while number > 0:
-            if p > 6:
-                p = 1
+    for period_grade, tuple in sections_needed_dict.items():
+        s = 0
+        counter = tuple[0]
+        while counter > 0:
+            if s > 4:
+                s = 0
             if t > len(teacher_capacity.keys()):
                 t = 1
+            grade = int(period_grade.split(" ")[1])
+            period = int(period_grade.split(" ")[0])
+            subject = f"{subjects[s]}"
             section_dict = {
                 'sectionid':i,
                 'teacherid': t,
-                'name': f"'{section_type} Period: {p} {i}'",
-                'period': p ,
-                'grade':section_type.split(' ')[1],
-                'capacity':20,
-                'subject':f"'{section_type.split(' ')[0]}'"
+                'name':f"'{subject} {grade} Period: {period} [{i}]'",
+                'period':period,
+                'grade': grade,
+                'capacity':20 if counter > 1 else tuple [1],
+                'subject':f"'{subject}'"
             }
             with open(section_file, 'a',newline='') as file:
                 writer = csv.DictWriter(file,fields)
                 writer.writerow(section_dict)
                 file.close()
-            number -= 1
-            p += 1
-            i += 1
+            s += 1
             t += 1
+            i += 1
+            counter -= 1
 
-generate_sections(sections_needed_grade_subject)
+generate_sections(sections_needed_grade_period)

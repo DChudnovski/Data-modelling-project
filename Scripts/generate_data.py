@@ -91,7 +91,17 @@ def generate_teacher_admin_data(number_of_entries):
             writer = csv.DictWriter(file,fields)
             writer.writerow(teacher_dict)
             file.close()
-        
-generate_teacher_admin_data(20)
+def check_student_grades():
+    students = pd.read_csv(student_file)
+    grade_counts = {
+    '6':0,
+    '7':0,
+    '8':0
+    }
+    for index, row in students.iterrows():
+        grade_counts[str(row['grade'])] += 1
+    return grade_counts
+
+print(check_student_grades())
 
  

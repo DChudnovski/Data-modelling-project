@@ -2,7 +2,7 @@
 
 if [[ $# != 1 ]]
 then
-    echo "writetables.sh <target_dir>"
+    echo "Syntax: writetables.sh <target_dir>"
     exit
 fi
 

@@ -47,17 +47,20 @@ for i in range(1,6):
 
 teacher_capacity = {}
 for index, row in teachers.iterrows():
-    teacher_capacity[f'{row['teacherid']}'] = round(total_sections/teachers.max()['teacherid'])
+    teacher_capacity[f'{row["teacherid"]}'] = round(total_sections/teachers.max()['teacherid'])
 
 def generate_sections(sections_needed_dict):
     i = 1
     t = 1
+    s = 0
+    s6 = 0
+    s7 = 0
+    s8 = 0
     fields = ['sectionid','teacherid','name','period','grade','capacity','subject']
     with open(section_file, 'w', newline='') as file:
         csv.DictWriter(file,fields).writeheader()
         file.close()
     for period_grade, tuple in sections_needed_dict.items():
-        s = 0
         counter = tuple[0]
         while counter > 0:
             if s > 4:
@@ -65,6 +68,21 @@ def generate_sections(sections_needed_dict):
             if t > len(teacher_capacity.keys()):
                 t = 1
             grade = int(period_grade.split(" ")[1])
+            if grade == 6:
+                s = s6
+                s6 += 1
+            elif grade == 7:
+                s = s7
+                s7 += 1
+            else:
+                s = s8
+                s8 += 1
+            if s6 > 4:
+                s6 = 0
+            if s7 > 4:
+                s7 = 0
+            if s8 > 4:
+                s8 = 0
             period = int(period_grade.split(" ")[0])
             subject = f"{subjects[s]}"
             section_dict = {
@@ -80,9 +98,10 @@ def generate_sections(sections_needed_dict):
                 writer = csv.DictWriter(file,fields)
                 writer.writerow(section_dict)
                 file.close()
-            s += 1
             t += 1
             i += 1
             counter -= 1
+        
+        
 
 generate_sections(sections_needed_grade_period)
